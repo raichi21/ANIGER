@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Store - iLourSari</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/customer.css">
+</head>
+<body class="customer-body">
+    <script>
+        // Check if user is authenticated
+        function capitalizeName(name) {
+            if (!name) return '';
+            return name.charAt(0).toUpperCase() + name.slice(1);
+        }
+
+        function checkCustomerAuth() {
+            const customerUser = localStorage.getItem('iloursari_customer_user');
+            if (!customerUser) {
+                window.location.href = 'customer-login.html';
+                return;
+            }
+            const user = JSON.parse(customerUser);
+            document.getElementById('userName').textContent = capitalizeName(user.firstName) || 'Customer';
+        }
+        checkCustomerAuth();
+    </script>
+    <!-- Navigation Header -->
+    <header class="customer-header">
+        <div class="header-container">
+            <div class="header-left">
+                <div class="logo-section">
+                    <i class="fas fa-store"></i>
+                    <span class="logo-text">iLourSari</span>
+                </div>
+            </div>
+
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchProducts" placeholder="Search products...">
+            </div>
+
+            <div class="header-right">
+                <button class="icon-btn notification-btn" onclick="toggleNotifications()">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">2</span>
+                </button>
+                <button class="icon-btn cart-btn" onclick="toggleCart()">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </button>
+                <div class="user-menu">
+                    <button class="user-btn" onclick="toggleUserMenu()">
+                        <i class="fas fa-user-circle user-icon"></i>
+                        <span id="userName">Customer</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="#profile">
+                            <i class="fas fa-user"></i> My Profile
+                        </a>
+                        <a href="#orders">
+                            <i class="fas fa-receipt"></i> My Orders
+                        </a>
+                        <a href="#wishlist">
+                            <i class="fas fa-heart"></i> Wishlist
+                        </a>
+                        <hr>
+                        <a href="#logout" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notification Dropdown -->
+            <div class="notification-dropdown" id="notificationDropdown">
+                <div class="notification-header">
+                    <h4>Notifications</h4>
+                    <button class="mark-read-btn" onclick="markAllAsRead()">Mark all as read</button>
+                </div>
+                <div class="notification-list">
+                    <div class="notification-item unread">
+                        <div class="notification-icon">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <div class="notification-content">
+                            <p>Your order #1234 has been shipped</p>
+                            <span class="notification-time">10 minutes ago</span>
+                        </div>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-icon">
+                            <i class="fas fa-tags"></i>
+                        </div>
+                        <div class="notification-content">
+                            <p>Flash sale: 20% off on all beverages</p>
+                            <span class="notification-time">2 hours ago</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="notification-footer">
+                    <a href="#notifications">View all notifications</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories Filter -->
+        <div class="categories-bar">
+            <button class="category-btn active" onclick="filterByCategory('all')">All Products</button>
+            <button class="category-btn" onclick="filterByCategory('Groceries')">Groceries</button>
+            <button class="category-btn" onclick="filterByCategory('Beverages')">Beverages</button>
+            <button class="category-btn" onclick="filterByCategory('Bakery')">Bakery</button>
+            <button class="category-btn" onclick="filterByCategory('Dairy')">Dairy</button>
+            <button class="category-btn" onclick="filterByCategory('Toiletries')">Toiletries</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="customer-main">
+        <!-- Products Grid -->
+        <section class="products-section">
+            <div class="section-header">
+                <h1>Available Products</h1>
+                <div class="sort-options">
+                    <select id="sortSelect" onchange="sortProducts()">
+                        <option value="default">Sort by: Default</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="name">Name: A to Z</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="products-grid" id="productsGrid">
+                <!-- Products loaded here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Shopping Cart Sidebar -->
+    <aside class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h2>Shopping Cart</h2>
+            <button class="close-cart-btn" onclick="toggleCart()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="cart-items-container">
+            <div class="cart-items" id="cartItems">
+                <p class="empty-cart">Your cart is empty</p>
+            </div>
+        </div>
+
+        <div class="cart-footer">
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span>Subtotal:</span>
+                    <span id="cartSubtotal">₱0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span>Shipping:</span>
+                    <span id="cartShipping">₱50.00</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total:</span>
+                    <span id="cartTotal">₱0.00</span>
+                </div>
+            </div>
+
+            <button class="btn-primary btn-large checkout-btn" onclick="proceedToCheckout()">
+                <i class="fas fa-check-circle"></i>
+                Proceed to Checkout
+            </button>
+
+            <button class="btn-text" style="width: 100%; margin-top: 10px;" onclick="toggleCart()">
+                Continue Shopping
+            </button>
+        </div>
+    </aside>
+
+    <!-- Cart Overlay -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+
+    <!-- Quick View Modal -->
+    <div class="modal" id="quickViewModal">
+        <div class="modal-content quick-view">
+            <button class="modal-close" onclick="closeQuickView()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="quick-view-content" id="quickViewContent">
+                <!-- Content loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/customer.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeCustomerDashboard();
+        });
+    </script>
+</body>
+</html>

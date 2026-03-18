@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard - iLourSari</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/dashboard.css">
+</head>
+<body class="dashboard-body">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fas fa-boxes"></i>
+            </div>
+            <div class="logo-text">
+                <h2>iLourSari</h2>
+                <p>Inventory</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#dashboard" class="nav-item active" onclick="switchDashboard('dashboard')">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#inventory" class="nav-item" onclick="switchDashboard('inventory')">
+                <i class="fas fa-boxes"></i>
+                <span>Inventory</span>
+            </a>
+            <a href="#stock" class="nav-item" onclick="switchDashboard('stock')">
+                <i class="fas fa-cube"></i>
+                <span>Stock In/Out</span>
+            </a>
+            <a href="#suppliers" class="nav-item" onclick="switchDashboard('suppliers')">
+                <i class="fas fa-truck"></i>
+                <span>Suppliers</span>
+            </a>
+            <a href="#reports" class="nav-item" onclick="switchDashboard('reports')">
+                <i class="fas fa-file-alt"></i>
+                <span>Reports</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1>Welcome Back</h1>
+            </div>
+            <div class="header-right">
+                <button class="icon-btn notification-btn" onclick="toggleNotifications()">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">2</span>
+                </button>
+                <button class="icon-btn settings-btn">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <div class="user-profile">
+                    <i class="fas fa-user-circle user-icon"></i>
+                </div>
+            </div>
+
+            <!-- Notification Dropdown -->
+            <div class="notification-dropdown" id="notificationDropdown">
+                <div class="notification-header">
+                    <h4>Notifications</h4>
+                    <button class="mark-read-btn" onclick="markAllAsRead()">Mark all as read</button>
+                </div>
+                <div class="notification-list">
+                    <div class="notification-item unread">
+                        <div class="notification-icon">
+                            <i class="fas fa-boxes"></i>
+                        </div>
+                        <div class="notification-content">
+                            <p>Inventory update: New stock arrived</p>
+                            <span class="notification-time">5 minutes ago</span>
+                        </div>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="notification-content">
+                            <p>Shift reminder: Your shift starts in 1 hour</p>
+                            <span class="notification-time">1 hour ago</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="notification-footer">
+                    <a href="#notifications" onclick="switchDashboard('notifications')">View all notifications</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <!-- Dashboard View -->
+            <div class="view-section active" id="dashboard">
+                <!-- Quick Stats -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-icon inventory">
+                            <i class="fas fa-boxes"></i>
+                        </div>
+                        <div class="kpi-info">
+                            <p class="kpi-label">Total Items</p>
+                            <h3 class="kpi-value">234</h3>
+                            <p class="kpi-change">In inventory</p>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon stock">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="kpi-info">
+                            <p class="kpi-label">Low Stock</p>
+                            <h3 class="kpi-value">8</h3>
+                            <p class="kpi-change negative"><i class="fas fa-arrow-down"></i> Needs restock</p>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon sales">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+                        <div class="kpi-info">
+                            <p class="kpi-label">Items Out Today</p>
+                            <h3 class="kpi-value">12</h3>
+                            <p class="kpi-change">Sold today</p>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon transactions">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                        <div class="kpi-info">
+                            <p class="kpi-label">Items In Today</p>
+                            <h3 class="kpi-value">5</h3>
+                            <p class="kpi-change positive"><i class="fas fa-arrow-up"></i> Received</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activities -->
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3>Recent Activities</h3>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Type</th>
+                                <th>Quantity</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Rice (50kg sack)</td>
+                                <td><span class="status-badge">In</span></td>
+                                <td>10</td>
+                                <td>10:30 AM</td>
+                                <td><span class="status-badge success">Completed</span></td>
+                            </tr>
+                            <tr>
+                                <td>Cooking Oil (1L)</td>
+                                <td><span class="status-badge">Out</span></td>
+                                <td>5</td>
+                                <td>09:45 AM</td>
+                                <td><span class="status-badge success">Completed</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Inventory View -->
+            <div class="view-section" id="inventory">
+                <div class="section-header">
+                    <h2>Inventory List</h2>
+                    <input type="text" id="inventorySearch" placeholder="Search inventory..." style="padding: 10px 15px; border: 1px solid var(--border-color); border-radius: 8px; width: 250px;">
+                </div>
+                <div class="table-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Item ID</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Stock</th>
+                                <th>Unit</th>
+                                <th>Min Level</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTable">
+                            <!-- Inventory loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Stock In/Out View -->
+            <div class="view-section" id="stock">
+                <div class="section-header">
+                    <h2>Stock Movement</h2>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <!-- Stock In Form -->
+                    <div class="table-card">
+                        <h3 style="margin-bottom: 20px;">
+                            <i class="fas fa-arrow-down" style="color: #10B981;"></i> Stock In
+                        </h3>
+                        <form id="stockInForm" style="display: flex; flex-direction: column; gap: 15px;">
+                            <div>
+                                <label style="display: block; font-weight: 600; margin-bottom: 8px;">Item</label>
+                                <select id="stockInItem" required style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;">
+                                    <option value="">Select item</option>
+                                    <option value="1">Rice (50kg sack)</option>
+                                    <option value="2">Cooking Oil (1L)</option>
+                                    <option value="3">Sugar (1kg)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: 600; margin-bottom: 8px;">Quantity</label>
+                                <input type="number" id="stockInQty" placeholder="0" required style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;">
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: 600; margin-bottom: 8px;">Supplier</label>
+                                <input type="text" id="stockInSupplier" placeholder="Supplier name" required style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;">
+                            </div>
+                            <button type="submit" class="btn-primary" style="background: #10B981;">
+                                <i class="fas fa-check"></i> Record Stock In
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Stock Out Form -->
+                    <div class="table-card">
+                        <h3 style="margin-bottom: 20px;">
+                            <i class="fas fa-arrow-up" style="color: #EF4444;"></i> Stock Out
+                        </h3>
+                        <form id="stockOutForm" style="display: flex; flex-direction: column; gap: 15px;">
+                            <div>
+                                <label style="display: block; font-weight: 600; margin-bottom: 8px;">Item</label>
+                                <select id="stockOutItem" required style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;">
+                                    <option value="">Select item</option>
+                                    <option value="1">Rice (50kg sack)</option>
+                                    <option value="2">Cooking Oil (1L)</option>
+                                    <option value="3">Sugar (1kg)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: 600; margin-bottom: 8px;">Quantity</label>
+                                <input type="number" id="stockOutQty" placeholder="0" required style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;">
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: 600; margin-bottom: 8px;">Reason</label>
+                                <select id="stockOutReason" required style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;">
+                                    <option value="sold">Sold</option>
+                                    <option value="damaged">Damaged</option>
+                                    <option value="adjustment">Adjustment</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn-primary" style="background: #EF4444;">
+                                <i class="fas fa-check"></i> Record Stock Out
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Suppliers View -->
+            <div class="view-section" id="suppliers">
+                <div class="section-header">
+                    <h2>Supplier Management</h2>
+                </div>
+                <p style="color: var(--text-secondary);">Supplier management features coming soon...</p>
+            </div>
+
+            <!-- Reports View -->
+            <div class="view-section" id="reports">
+                <div class="section-header">
+                    <h2>Inventory Reports</h2>
+                </div>
+                <p style="color: var(--text-secondary);">Report generation features coming soon...</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/staff.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeDashboard('staff');
+            initializeStaffDashboard();
+        });
+    </script>
+</body>
+</html>

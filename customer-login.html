@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Login - iLourSari</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/auth.css">
+</head>
+<body class="bg-gradient-auth">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <a href="index.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <div class="auth-logo customer">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <h1>Customer Account</h1>
+                <p>Login or create a new account</p>
+            </div>
+
+            <div class="auth-tabs">
+                <button class="tab-btn active" data-tab="login">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <button class="tab-btn" data-tab="signup">
+                    <i class="fas fa-user-plus"></i> Sign Up
+                </button>
+            </div>
+
+            <!-- LOGIN TAB -->
+            <form id="customerLoginForm" class="auth-form tab-content active" data-tab="login">
+                <div class="form-group">
+                    <label for="loginEmail">Email Address</label>
+                    <div class="input-group">
+                        <i class="fas fa-envelope icon"></i>
+                        <input type="email" id="loginEmail" name="email" placeholder="Enter your email" required>
+                    </div>
+                    <span class="error-message" id="loginEmailError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <div class="input-group">
+                        <i class="fas fa-lock icon"></i>
+                        <input type="password" id="loginPassword" name="password" placeholder="Enter your password" required>
+                        <button type="button" class="toggle-password" onclick="togglePassword('loginPassword', this)">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <span class="error-message" id="loginPasswordError"></span>
+                </div>
+
+                <div class="form-remember">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="rememberMeCustomer" name="rememberMe">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#forgot" class="forgot-link">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn-primary btn-large">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Login
+                </button>
+
+                <div class="form-divider">
+                    <span>OR</span>
+                </div>
+
+                <div class="social-login">
+                    <button type="button" class="btn-social google-btn" onclick="handleGoogleLogin()">
+                        <i class="fab fa-google"></i>
+                        <span>Login with Google</span>
+                    </button>
+                    <button type="button" class="btn-social facebook-btn" onclick="handleFacebookLogin()">
+                        <i class="fab fa-facebook-f"></i>
+                        <span>Login with Facebook</span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- SIGNUP TAB -->
+            <form id="customerSignupForm" class="auth-form tab-content" data-tab="signup">
+                <div class="form-group">
+                    <label for="firstName">First Name</label>
+                    <div class="input-group">
+                        <i class="fas fa-user icon"></i>
+                        <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" required>
+                    </div>
+                    <span class="error-message" id="firstNameError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <div class="input-group">
+                        <i class="fas fa-user icon"></i>
+                        <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" required>
+                    </div>
+                    <span class="error-message" id="lastNameError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="signupEmail">Email Address</label>
+                    <div class="input-group">
+                        <i class="fas fa-envelope icon"></i>
+                        <input type="email" id="signupEmail" name="email" placeholder="Enter your email" required>
+                    </div>
+                    <span class="error-message" id="signupEmailError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <div class="input-group">
+                        <i class="fas fa-lock icon"></i>
+                        <input type="password" id="signupPassword" name="password" placeholder="Create a password" required>
+                        <button type="button" class="toggle-password" onclick="togglePassword('signupPassword', this)">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <span class="error-message" id="signupPasswordError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <div class="input-group">
+                        <i class="fas fa-lock icon"></i>
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+                        <button type="button" class="toggle-password" onclick="togglePassword('confirmPassword', this)">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <span class="error-message" id="confirmPasswordError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <div class="input-group">
+                        <i class="fas fa-phone icon"></i>
+                        <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+                    </div>
+                    <span class="error-message" id="phoneError"></span>
+                </div>
+
+                <label class="checkbox-label terms">
+                    <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                    <span>I agree to the <a href="#terms" target="_blank">Terms and Conditions</a></span>
+                </label>
+                <span class="error-message" id="termsError"></span>
+
+                <button type="submit" class="btn-primary btn-large">
+                    <i class="fas fa-user-plus"></i>
+                    Create Account
+                </button>
+
+                <div class="form-divider">
+                    <span>OR</span>
+                </div>
+
+                <div class="social-login">
+                    <button type="button" class="btn-social google-btn" onclick="handleGoogleSignup()">
+                        <i class="fab fa-google"></i>
+                        <span>Sign up with Google</span>
+                    </button>
+                    <button type="button" class="btn-social facebook-btn" onclick="handleFacebookSignup()">
+                        <i class="fab fa-facebook-f"></i>
+                        <span>Sign up with Facebook</span>
+                    </button>
+                </div>
+            </form>
+
+            <div class="auth-footer">
+                <p>Need help? <a href="#support">Contact support</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+                switchTab(this, tabName);
+            });
+        });
+
+        // Login form
+        document.getElementById('customerLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            handleCustomerLogin(
+                document.getElementById('loginEmail').value,
+                document.getElementById('loginPassword').value,
+                document.getElementById('rememberMeCustomer').checked
+            );
+        });
+
+        // Signup form
+        document.getElementById('customerSignupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            handleCustomerSignup({
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('signupEmail').value,
+                password: document.getElementById('signupPassword').value,
+                confirmPassword: document.getElementById('confirmPassword').value,
+                phone: document.getElementById('phone').value
+            });
+        });
+    </script>
+</body>
+</html>

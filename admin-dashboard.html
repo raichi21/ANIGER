@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - iLourSari</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/dashboard.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+</head>
+<body class="dashboard-body">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fas fa-store"></i>
+            </div>
+            <div class="logo-text">
+                <h2>iLourSari</h2>
+                <p>Admin Portal</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#monitoring" class="nav-item active" onclick="switchDashboard(this, 'monitoring')">
+                <i class="fas fa-chart-line"></i>
+                <span>Central Monitoring</span>
+            </a>
+            <a href="#sales" class="nav-item" onclick="switchDashboard(this, 'sales')">
+                <i class="fas fa-dollar-sign"></i>
+                <span>Sales</span>
+            </a>
+            <a href="#reservations" class="nav-item" onclick="switchDashboard(this, 'reservations')">
+                <i class="fas fa-calendar-check"></i>
+                <span>Reservations</span>
+            </a>
+            <a href="#pos" class="nav-item" onclick="switchDashboard(this, 'pos')">
+                <i class="fas fa-qrcode"></i>
+                <span>QR & Mobile POS</span>
+            </a>
+            <a href="#payments" class="nav-item" onclick="switchDashboard(this, 'payments')">
+                <i class="fas fa-credit-card"></i>
+                <span>Payments & Pick-Up</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1>Welcome Back</h1>
+            </div>
+            <div class="header-right">
+                <button class="icon-btn notification-btn" onclick="toggleNotifications()">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                </button>
+                <button class="icon-btn settings-btn">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <div class="user-profile">
+                    <i class="fas fa-user-circle user-icon"></i>
+                </div>
+            </div>
+
+            <!-- Notification Dropdown -->
+            <div class="notification-dropdown" id="notificationDropdown">
+                <div class="notification-header">
+                    <h4>Notifications</h4>
+                    <button class="mark-read-btn" onclick="markAllAsRead()">Mark all as read</button>
+                </div>
+                <div class="notification-list">
+                    <div class="notification-item unread">
+                        <div class="notification-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="notification-content">
+                            <p>New order received from Customer #1234</p>
+                            <span class="notification-time">2 minutes ago</span>
+                        </div>
+                    </div>
+                    <div class="notification-item unread">
+                        <div class="notification-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="notification-content">
+                            <p>Low stock alert: Coca Cola (5 remaining)</p>
+                            <span class="notification-time">15 minutes ago</span>
+                        </div>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="notification-content">
+                            <p>New staff member registered</p>
+                            <span class="notification-time">1 hour ago</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="notification-footer">
+                    <a href="#notifications" onclick="switchDashboard('notifications')">View all notifications</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <!-- Centralized Monitoring View -->
+            <div class="view-section active" id="monitoring">
+                <!-- KPI Cards -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-icon sales">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="kpi-info">
+                            <p class="kpi-label">Daily Sales</p>
+                            <h3 class="kpi-value">₱50,000</h3>
+                            <p class="kpi-change positive"><i class="fas fa-arrow-up"></i> 12% from yesterday</p>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon inventory">
+                            <i class="fas fa-boxes"></i>
+                        </div>
+                        <div class="kpi-info">
+                            <p class="kpi-label">Inventory Value</p>
+                            <h3 class="kpi-value">₱81,000</h3>
+                            <p class="kpi-change">Across 3 branches</p>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon transactions">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                        <div class="kpi-info">
+                            <p class="kpi-label">Today's Transactions</p>
+                            <h3 class="kpi-value">10,00</h3>
+                            <p class="kpi-change positive"><i class="fas fa-arrow-up"></i> 8 transactions</p>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon stock">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="kpi-info">
+                            <p class="kpi-label">Low Stock Items</p>
+                            <h3 class="kpi-value">5</h3>
+                            <p class="kpi-change negative"><i class="fas fa-arrow-down"></i> Requires attention</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Sales Trend</h3>
+                            <select class="chart-filter">
+                                <option>This Week</option>
+                                <option>This Month</option>
+                                <option>This Year</option>
+                            </select>
+                        </div>
+                        <canvas id="salesChart"></canvas>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Sales by Category</h3>
+                        </div>
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Branch Overview -->
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3>Branch Overview</h3>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Branch Name</th>
+                                <th>Total Sales</th>
+                                <th>Inventory Value</th>
+                                <th>Orders</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Main Branch</strong></td>
+                                <td>₱125,000</td>
+                                <td>₱185,000</td>
+                                <td>145</td>
+                                <td><span class="status-badge active">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>2nd Branch</strong></td>
+                                <td>₱98,000</td>
+                                <td>₱185,000</td>
+                                <td>145</td>
+                                <td><span class="status-badge active">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>3rd Branch</strong></td>
+                                <td>₱75,000</td>
+                                <td>₱185,000</td>
+                                <td>145</td>
+                                <td><span class="status-badge active">Active</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Analytics View -->
+            <div class="view-section" id="analytics">
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <h3>Total Revenue</h3>
+                        <p class="analytics-value">₱298,000</p>
+                        <p class="analytics-change positive"><i class="fas fa-arrow-up"></i> 15% vs last month</p>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Total Orders</h3>
+                        <p class="analytics-value">435</p>
+                        <p class="analytics-change positive"><i class="fas fa-arrow-up"></i> 22 orders today</p>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Avg Order Value</h3>
+                        <p class="analytics-value">₱685</p>
+                        <p class="analytics-change">Based on recent data</p>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Active Customers</h3>
+                        <p class="analytics-value">1,234</p>
+                        <p class="analytics-change positive"><i class="fas fa-arrow-up"></i> 45 new this month</p>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Revenue by Month</h3>
+                    </div>
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Inventory View -->
+            <div class="view-section" id="inventory">
+                <div class="section-header">
+                    <h2>Inventory Management</h2>
+                    <button class="btn-primary">
+                        <i class="fas fa-plus"></i> Add Item
+                    </button>
+                </div>
+                <div class="table-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Stock</th>
+                                <th>Unit Price</th>
+                                <th>Total Value</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Rice (50kg sack)</td>
+                                <td>45</td>
+                                <td>₱850</td>
+                                <td>₱38,250</td>
+                                <td><span class="status-badge">In Stock</span></td>
+                            </tr>
+                            <tr>
+                                <td>Cooking Oil (1L)</td>
+                                <td>12</td>
+                                <td>₱250</td>
+                                <td>₱3,000</td>
+                                <td><span class="status-badge warning">Low Stock</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Sales View -->
+            <div class="view-section" id="sales">
+                <div class="section-header">
+                    <h2>Sales Records</h2>
+                </div>
+                <div class="table-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#ORD001</td>
+                                <td>Maria Santos</td>
+                                <td>₱1,250</td>
+                                <td>2024-03-17</td>
+                                <td><span class="status-badge success">Completed</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Reservations View -->
+            <div class="view-section" id="reservations">
+                <div class="section-header">
+                    <h2>Reservation Management</h2>
+                    <p style="color: var(--text-secondary);">Review customer reservations across branches and manage availability to avoid stock conflicts.</p>
+                </div>
+                <div class="table-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Reservation ID</th>
+                                <th>Customer</th>
+                                <th>Branch</th>
+                                <th>Items</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#RES001</td>
+                                <td>Juan Dela Cruz</td>
+                                <td>Main Branch</td>
+                                <td>Rice, Cooking Oil</td>
+                                <td>2026-03-19</td>
+                                <td><span class="status-badge active">Confirmed</span></td>
+                            </tr>
+                            <tr>
+                                <td>#RES002</td>
+                                <td>Maria Santos</td>
+                                <td>2nd Branch</td>
+                                <td>Snacks, Water</td>
+                                <td>2026-03-20</td>
+                                <td><span class="status-badge warning">Pending</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- POS View -->
+            <div class="view-section" id="pos">
+                <div class="section-header">
+                    <h2>QR & Mobile POS</h2>
+                    <p style="color: var(--text-secondary);">Manage product pricing, QR codes, and availability to ensure accurate scanning at checkout.</p>
+                </div>
+                <div class="table-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>QR Code</th>
+                                <th>Availability</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Rice (50kg sack)</td>
+                                <td>₱850</td>
+                                <td>45</td>
+                                <td><button class="btn-secondary">View QR</button></td>
+                                <td><span class="status-badge active">Available</span></td>
+                            </tr>
+                            <tr>
+                                <td>Cooking Oil (1L)</td>
+                                <td>₱250</td>
+                                <td>12</td>
+                                <td><button class="btn-secondary">View QR</button></td>
+                                <td><span class="status-badge warning">Low Stock</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Payments View -->
+            <div class="view-section" id="payments">
+                <div class="section-header">
+                    <h2>Payments & Pick-Up</h2>
+                    <p style="color: var(--text-secondary);">Review payments and monitor completed pickups (Cash / GCash).</p>
+                </div>
+                <div class="table-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Payment ID</th>
+                                <th>Order</th>
+                                <th>Amount</th>
+                                <th>Method</th>
+                                <th>Status</th>
+                                <th>Pick-up</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#PAY001</td>
+                                <td>#ORD001</td>
+                                <td>₱1,250</td>
+                                <td>Cash</td>
+                                <td><span class="status-badge success">Completed</span></td>
+                                <td>2026-03-18</td>
+                            </tr>
+                            <tr>
+                                <td>#PAY002</td>
+                                <td>#ORD002</td>
+                                <td>₱890</td>
+                                <td>GCash</td>
+                                <td><span class="status-badge active">Awaiting Pickup</span></td>
+                                <td>2026-03-19</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script>
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeDashboard('admin');
+            initializeCharts();
+        });
+    </script>
+</body>
+</html>

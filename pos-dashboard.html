@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Point of Sale - iLourSari</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/dashboard.css">
+    <link rel="stylesheet" href="styles/pos.css">
+</head>
+<body class="dashboard-body">
+    <script>
+        // Check if user is authenticated
+        function checkCashierAuth() {
+            const staffUser = localStorage.getItem('iloursari_staff_user');
+            if (!staffUser) {
+                window.location.href = 'staff-login.html';
+                return;
+            }
+            const user = JSON.parse(staffUser);
+            if (user.role !== 'Cashier' && user.role !== 'Admin') {
+                alert('You do not have permission to access this page.');
+                window.location.href = 'staff-login.html';
+            }
+            document.getElementById('userName').textContent = user.name || 'Cashier';
+        }
+        checkCashierAuth();
+    </script>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fas fa-cash-register"></i>
+            </div>
+            <div class="logo-text">
+                <h2>iLourSari</h2>
+                <p>POS System</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#monitoring" class="nav-item active" onclick="switchDashboard(this, 'monitoring')">
+                <i class="fas fa-chart-line"></i>
+                <span>Monitoring</span>
+            </a>
+            <a href="#checkout" class="nav-item" onclick="switchDashboard(this, 'checkout')">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Checkout</span>
+            </a>
+            <a href="#inventory" class="nav-item" onclick="switchDashboard(this, 'inventory')">
+                <i class="fas fa-boxes"></i>
+                <span>Inventory</span>
+            </a>
+            <a href="#sales" class="nav-item" onclick="switchDashboard(this, 'sales')">
+                <i class="fas fa-receipt"></i>
+                <span>Sales</span>
+            </a>
+            <a href="#reservations" class="nav-item" onclick="switchDashboard(this, 'reservations')">
+                <i class="fas fa-calendar-check"></i>
+                <span>Reservations</span>
+            </a>
+            <a href="#payments" class="nav-item" onclick="switchDashboard(this, 'payments')">
+                <i class="fas fa-credit-card"></i>
+                <span>Payments</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1>Welcome Back</h1>
+            </div>
+            <div class="header-right">
+                <button class="icon-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">1</span>
+                </button>
+                <button class="icon-btn">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- POS Content -->
+        <div class="dashboard-content pos-layout">
+            <!-- Monitoring View -->
+            <div class="view-section active" id="monitoring">
+                <div class="section-header">
+                    <h2>Central Monitoring</h2>
+                    <p style="color: var(--text-secondary);">Real-time stock availability across branches.</p>
+                </div>
+                <div class="table-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Main Branch</th>
+                                <th>2nd Branch</th>
+                                <th>3rd Branch</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="monitoringTable">
+                            <!-- Monitoring data loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Checkout View -->
+            <div class="view-section" id="checkout">
+                <div class="pos-grid">
+                    <!-- Product Display -->
+                    <div class="product-section">
+                        <div class="section-header">
+                            <h2>Products</h2>
+                            <input type="text" id="searchProducts" placeholder="Search products..." class="search-input">
+                        </div>
+                        <div class="product-grid" id="productGrid">
+                            <!-- Products loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Cart Section -->
+                    <div class="cart-section">
+                        <div class="section-header">
+                            <h3>Shopping Cart</h3>
+                            <button class="btn-text" onclick="clearCart()">Clear</button>
+                        </div>
+
+                        <div class="cart-items" id="cartItems">
+                            <p class="empty-cart">Cart is empty</p>
+                        </div>
+
+                        <div class="cart-summary">
+                            <div class="summary-row">
+                                <span>Subtotal:</span>
+                                <span id="subtotal">₱0.00</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Discount:</span>
+                                <span id="discount">₱0.00</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Tax (12%):</span>
+                                <span id="tax">₱0.00</span>
+                            </div>
+                            <div class="summary-row total">
+                                <span>Total:</span>
+                                <span id="total">₱0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="payment-section">
+                            <select id="paymentMethod" class="payment-select">
+                                <option value="cash">Cash</option>
+                                <option value="gcash">GCash</option>
+                            </select>
+
+                            <input type="number" id="cashReceived" placeholder="Amount Received" class="payment-input">
+                            <div id="changeDisplay" class="change-display"></div>
+
+                            <button class="btn-primary btn-large checkout-btn" onclick="processPayment()">
+                                <i class="fas fa-check-circle"></i>
+                                Complete Payment
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inventory View -->
+            <div class="view-section" id="inventory">
+                <div class="section-header">
+                    <h2>Inventory Management</h2>
+                </div>
+                <div class="table-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Stock</th>
+                                <th>Price</th>
+                                <th>Supplier</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTable">
+                            <!-- Inventory loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Sales View -->
+            <div class="view-section" id="sales">
+                <div class="section-header">
+                    <h2>Today's Sales</h2>
+                </div>
+                <div class="sales-summary">
+                    <div class="summary-card">
+                        <h4>Total Transactions</h4>
+                        <p id="totalTransactions">0</p>
+                    </div>
+                    <div class="summary-card">
+                        <h4>Total Sales</h4>
+                        <p id="totalSales">₱0.00</p>
+                    </div>
+                    <div class="summary-card">
+                        <h4>Avg Transaction</h4>
+                        <p id="avgTransaction">₱0.00</p>
+                    </div>
+                </div>
+
+                <div class="table-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Receipt #</th>
+                                <th>Time</th>
+                                <th>Items</th>
+                                <th>Amount</th>
+                                <th>Payment</th>
+                            </tr>
+                        </thead>
+                        <tbody id="salesTable">
+                            <!-- Sales loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Reservations View -->
+            <div class="view-section" id="reservations">
+                <div class="section-header">
+                    <h2>Reservations</h2>
+                    <p style="color: var(--text-secondary);">Confirm reserved items and ensure they are ready for pickup.</p>
+                </div>
+                <div class="table-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Reservation #</th>
+                                <th>Customer</th>
+                                <th>Items</th>
+                                <th>Branch</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reservationsTable">
+                            <!-- Reservations loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Payments View -->
+            <div class="view-section" id="payments">
+                <div class="section-header">
+                    <h2>Payments & Pick-Up</h2>
+                    <p style="color: var(--text-secondary);">Validate payments (Cash / GCash) and mark pickups complete.</p>
+                </div>
+
+                <div class="payment-controls">
+                    <div class="payment-filter">
+                        <label>Method:</label>
+                        <select id="paymentMethodFilter" onchange="loadPaymentsTable()">
+                            <option value="all">All</option>
+                            <option value="cash">Cash</option>
+                            <option value="gcash">GCash</option>
+                        </select>
+                    </div>
+                    <div class="payment-filter">
+                        <label>Status:</label>
+                        <select id="paymentStatusFilter" onchange="loadPaymentsTable()">
+                            <option value="all">All</option>
+                            <option value="pending">Pending</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                    <div class="payment-summary" id="paymentSummary">
+                        <!-- Summary stats populated by JS -->
+                    </div>
+                </div>
+
+                <div class="table-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Payment #</th>
+                                <th>Order</th>
+                                <th>Amount</th>
+                                <th>Method</th>
+                                <th>Status</th>
+                                <th>Pick-Up</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="paymentsTable">
+                            <!-- Payments loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Receipt Modal -->
+    <div id="receiptModal" class="modal">
+        <div class="modal-content receipt-content">
+            <button class="modal-close" onclick="closeModal('receiptModal')">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="receipt">
+                <div class="receipt-header">
+                    <h2>LOURDES SARI-SARI STORE</h2>
+                    <p id="receiptDate"></p>
+                </div>
+                <div id="receiptItems"></div>
+                <div class="receipt-total">
+                    <p><strong>TOTAL: <span id="receiptTotal">₱0.00</span></strong></p>
+                </div>
+                <div class="receipt-actions">
+                    <button class="btn-primary" onclick="printReceipt()">
+                        <i class="fas fa-print"></i> Print
+                    </button>
+                    <button class="btn-text" onclick="closeModal('receiptModal')">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/pos.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeDashboard('cashier');
+            initializePOS();
+        });
+    </script>
+</body>
+</html>
